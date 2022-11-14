@@ -1,0 +1,55 @@
+version: "3.3"
+volumes:
+  postgresdata1:
+
+services:
+  ingestor:
+    restart: unless-stopped
+    #image: "mlockett42/headsup-ingestor:v0.0.1"
+    image: "headsup-ingestor"
+    environment:
+      - headsup_serverurl=ws://website/ws
+      - headsup_name=Ingestor 1
+      - headsup_accesskey=abc123
+      - headsup_logginglevel=INFO
+      #- headsup_sentryurl=""
+    depends_on:
+      - website
+  website:
+    restart: unless-stopped
+    #image: "mlockett42/headsup-website:v0.0.1"
+    image: "headsup-website"
+    ports:
+      - "8000:80"
+    environment:
+      - LANG=en_AU
+      - headsup_server_masterpassword=abcd1234
+      - headsup_server_jwtsecret=Update in production
+      - headsup_server_sentryurl=
+      - headsup_server_postgreshost=postgres
+      - headsup_server_postgrespassword=password2
+      - headsup_server_debugingestorpassword=abc123
+      - headsup_server_ingestortimeout=60
+      - headsup_logginglevel=INFO
+      # - headsup_server_emailalerts=True
+      # - headsup_server_emailsender=mark@deliveryengine.net
+      # - headsup_server_emailto=mlockett@bigpond.com,mark@hackerpals.com
+      # - headsup_server_emailsmtpserver=smtp.deliveryengine.net
+      # - headsup_server_emailsmtpssl=True
+      # - headsup_server_emailsmtptls=True
+      # - headsup_server_emailsmtpport=25
+      # - headsup_server_emailsmtpuser=mark@deliveryengine.net
+      # - headsup_server_emailsmtppassword=password1
+      # - headsup_server_slackalerts=True
+      # - headsup_server_slackhook=https://hooks.slack.com/services/xxxx/yyyy/zzzz
+    depends_on:
+      - postgres
+  postgres:
+    restart: unless-stopped
+    image: "postgres:13.7"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=password2
+    volumes:
+      - postgresdata1:/var/lib/postgresql
