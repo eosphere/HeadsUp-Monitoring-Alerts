@@ -60,6 +60,8 @@ Set the following entries
 
 **headsup_server_emailsmtppassword** Password to use when connecting to the SMTP server
 
+**headsup_server_rooturl** The root of your webserver, used for calculating the full URLs for silencing (eg https://headsup.eosphere.io)
+
 **headsup_server_slackalerts** Set to true if want to send slack alerts
 
 **headsup_server_slackhook** The slack hook URL for your postgres
@@ -76,7 +78,7 @@ First the postgres database container.
 
 This will download the postgres container and then run it which initialises the database. We do this because of the time it takes to initialise this container. When the website container starts it tries to run the database migrations immediately, if the database is not ready this causes problems.
 
-Once the database container is initialise press Ctrl+C to stop it.
+Once the database container is initialised press Ctrl+C to stop it.
 
 Next we want to start the website.
 
@@ -122,7 +124,7 @@ Stream logs to the console as they occur. Useful for detemining the liveness of 
 
 ```
 docker images | grep headsup-website | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi mlockett42/headsup-website:{}
-docker images | grep headsup-ingestor | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi mlockett42/headsup-ingestor:{
+docker images | grep headsup-ingestor | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi mlockett42/headsup-ingestor:{}
 ```
 
 These delete all container images with headsup-website and headsup-ingestor in them, except for the running containers. So as long as docker compose is running they will clean up old container images. The container images are qute large and useless once upgraded so you probably want to do this regularly
