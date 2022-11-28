@@ -2,7 +2,7 @@
 
 A running HeadsUp implementation consists of 3 components Website, Ingestor and Database.
 
-HeadsUp is designed for Antelope Node Operators to run a private instance of the platform on their internal network using docker and docker compose.
+HeadsUp is designed for Antelope Node Operators to run a private instance of the platform on their internal network using docker for each of the components and docker compose to orchestrate and configure the base deployment.
 
 ## Website
 
@@ -25,17 +25,62 @@ A postgres database which holds the current configuration information and a list
 - docker
 - docker compose
 
-# Features
+# Setting Up
 
-# Installation
+This guide follows installing HeadsUp on a server running Ubuntu 22.04 however other docker compatible distributions will work with minor adjustments. The steps to a running production HeadsUp instance are the following:
 
-These instructions follow installing Headsup on a server running Ubuntu Linux. Headsup is designed to run in several docker containers managed by docker compose. The instructions assuming Linux Ubuntu 18.04 but other distros should require only small changes to account for how to install docker and docker compose.
+1) Install docker and docker compose
+2) Configure the docker-compose.yaml
+3) Initial startup
+4) Configure Chains
+5) Configure Nodes
+6) Configure Metrics
+7) Set Alerts
 
-https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04
+## 1) Install docker and docker compose
 
-and
+**docker**
+```
+> sudo apt update
 
-https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-18-04
+> sudo apt install apt-transport-https ca-certificates curl software-properties-common
+
+> curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+> echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+> sudo apt update
+
+*Check what version will be installed*
+> apt-cache policy docker-ce
+
+> sudo apt install docker-ce
+
+*Check docker version*
+> docker --version
+```
+**NB:** Docker requires that the user that will be running docker is in the docker user group, assuming you don't want to run HeadsUp as root add your user to the docker group as below:
+```
+> sudo usermod -aG docker ${USER}
+```
+
+**docker compose**
+```
+> mkdir -p ~/.docker/cli-plugins/
+
+> curl -SL https://github.com/docker/compose/releases/download/v2.3.3/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+
+> chmod +x ~/.docker/cli-plugins/docker-compose
+
+*Check docker compose version*
+> docker compose version
+```
+
+
+
+
+
+
 
 The best way to install Headsup is using docker-compose. The file `config/docker-compose/docker-compose.yaml` contains an example docker-compose file.
 
