@@ -6,11 +6,11 @@ services:
   ingestor:
     restart: unless-stopped
     image: "eosphere/headsup-ingestor:v0.0.110"
-    mem_limit: 300m
+    mem_limit: 1024m
     environment:
       - headsup_serverurl=ws://website/ws
       - headsup_name=Ingestor 1
-      - headsup_accesskey=<Put access key here>
+      - headsup_accesskey=<ENTER ACCESS KEY HERE>
       - headsup_logginglevel=INFO
       - headsup_nodeospollschedule=2
       - headsup_votingpollschedule=30
@@ -32,26 +32,26 @@ services:
       - "8000:80"
     environment:
       - LANG=en_AU
-      - headsup_server_masterpassword=abcd1234
-      - headsup_server_jwtsecret=Update in production
-      - headsup_server_sentryurl=
-      - headsup_server_frontendsentryurl=
+      - headsup_server_masterpassword=<ENTER NEW PASSWORD>
+      - headsup_server_jwtsecret=<ENTER NEW RANDOM SEED>
+      # - headsup_server_sentryurl=
+      # - headsup_server_frontendsentryurl=
       - headsup_server_postgreshost=postgres
-      - headsup_server_postgrespassword=password2
+      - headsup_server_postgrespassword=<POSTGRES PASSWORD>
       #- headsup_server_debugingestorpassword=abc123
       - headsup_server_ingestortimeout=60
       - headsup_logginglevel=INFO
-      - headsup_server_rooturl=https://headsup.eosphere.io
-      # - headsup_server_emailalerts=True
-      # - headsup_server_emailsender=mark@deliveryengine.net
-      # - headsup_server_emailto=mlockett@bigpond.com,mark@hackerpals.com
-      # - headsup_server_emailsmtpserver=smtp.deliveryengine.net
-      # - headsup_server_emailsmtpssl=True
-      # - headsup_server_emailsmtptls=True
+      - headsup_server_rooturl=<https://YOUR ROOT URL>
+      # - headsup_server_emailalerts=true
+      # - headsup_server_emailsender=<EMAIL SENDER ADDRESS>
+      # - headsup_server_emailto=<ALERTS EMAIL 1>,<ALERTS EMAIL 2>
+      # - headsup_server_emailsmtpserver=smtp.gmail.com
+      # - headsup_server_emailsmtpssl=false
+      # - headsup_server_emailsmtptls=false
       # - headsup_server_emailsmtpport=25
-      # - headsup_server_emailsmtpuser=mark@deliveryengine.net
-      # - headsup_server_emailsmtppassword=password1
-      # - headsup_server_slackalerts=True
+      # - headsup_server_emailsmtpuser=<SMTP SERVER USERNAME>
+      # - headsup_server_emailsmtppassword=<SMTP SERVER PASSWORD>
+      # - headsup_server_slackalerts=true
       # - headsup_server_slackhook=https://hooks.slack.com/services/xxxx/yyyy/zzzz
     logging:
       driver: "journald"
@@ -66,6 +66,6 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_PASSWORD=password2
+      - POSTGRES_PASSWORD=<POSTGRES PASSWORD>
     volumes:
       - postgresdata1:/var/lib/postgresql
