@@ -11,7 +11,7 @@ The Website is the central hub of the HeadsUp platform. The website receives met
 The website is a SPA (single page application) when the user browses to it, it opens a websocket to the website. The website then sends metrics and alerts down that websocket.
 
 ## Ingestor
-???
+The Ingestor is the engine of the HeadsUp platform. The Ingestor is resposible for querying all monitored nodes and providing structured metric data to the Website.
 
 ## Database
 
@@ -198,28 +198,6 @@ or
 ```
 In this configuration docker compose will automatically restart the HeadsUp platform on reboot.
 
-
-## Useful commands while running Headsup
-
-### Viewing logs
-
-`journalctl -u docker.service -n 25`
-
-Show the last 25 log entries.
-
-`journalctl -f -u docker.service`
-
-Stream logs to the console as they occur. Useful for detemining the liveness of headsup
-
-### Cleaning up old containers
-
-```
-docker images | grep headsup-website | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi eosphere/headsup-website:{}
-docker images | grep headsup-ingestor | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi eosphere/headsup-ingestor:{}
-```
-
-This will delete all container images with headsup-website and headsup-ingestor in them, except for the running containers. So as long as docker compose is running these will clean up old container images. The container images are qute large and useless once upgraded so you probably want to do this as part of your usual maintenace after performing an upgrade.
-
 ## 4) Configure Chains
 HeadsUp has the ability to monitor and alert on multiple Antelope blockchains at the same time, each new chain is essentially a discrete blockchain network Mainnet/Testnet etc.
 
@@ -301,7 +279,7 @@ Click **Create >**
 
 _A connect metric will need to be configured before a new node shows as reachable_
 
-## Configuring Metrics
+## 6) Configure Metrics
 
 Metrics define what is displayed on the HeadsUp dashboard as well as make various alerts available. 
 
@@ -427,8 +405,52 @@ Status as reported by Atomic API
 **AtomicAssets/BlockNumber**
 The last reported block number processed by the node
 
-### Setting Alerts
+## 7) Set Alerts
 
-Metrics only tell us a value while alerts will send us a message when a certain condition is met. There is a alerts tab in the same dialog where you enable metrics. Switch to it and you can enable alerts on that metric. Each alert has a condition field which is what it will test against and an explanation of what the condition field is.
+Metrics only advise on a value while alerts will send a message when a certain condition is met. Depending on your configuration these alerts notify via the website dashboard, email and/or slack.
 
+Alerts are set on each node and are available when a corresponding metric has been selected in the same Metrics and Alert dialog box.
+
+Connect to the website and **Login** as the master user.
+
+Click **Home**
+
+Click on the relevent **Chain**
+
+Click on the relevent **Node**
+
+Click the **Bell Icon** in the top right hand corner
+
+Click **Alerts**
+
+Each alert has a condition field which is what it will test against, there is an explanation of the condition field on the right hand side.
+
+### New User Alerts Recommendation
+Start with experiment setting thresholds for alerts relevent to the Node Type, some Metrics will automatically be alerted on when selected such as Node/Connects or Node/Claimer_Has_Run
+
+These alerts are quite handy to start with:
+- Node/Db_Size_Free : 4096
+- Node/HeadBlock : 100
+- Node/Latency : 2000
+
+## Useful commands while running Headsup
+
+### Viewing logs
+
+`journalctl -u docker.service -n 25`
+
+Show the last 25 log entries.
+
+`journalctl -f -u docker.service`
+
+Stream logs to the console as they occur. Useful for detemining the liveness of headsup
+
+### Cleaning up old containers
+
+```
+docker images | grep headsup-website | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi eosphere/headsup-website:{}
+docker images | grep headsup-ingestor | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi eosphere/headsup-ingestor:{}
+```
+
+This will delete all container images with headsup-website and headsup-ingestor in them, except for the running containers. So as long as docker compose is running these will clean up old container images. The container images are qute large and useless once upgraded so you probably want to do this as part of your usual maintenace after performing an upgrade.
 
