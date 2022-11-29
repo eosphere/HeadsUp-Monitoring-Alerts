@@ -240,10 +240,10 @@ A human readable name for the chain. This name is the name used to identify the 
 You can choose the chain type, this will prefillout some of the values (chain id and Vote Decay Type) with that chain's known settings and use the correct chain icon. Unknown chains can use the `Private Chain` type.
 
 **Icon**
-Icon to use for this chain, you cannot customise this setting.
+This is the icon to use for this chain, you cannot customise this setting.
 
 **BP Name**
-For metrics which monitor our block producer this is the name of the block producer. Ie the name of the owning EOS account.
+For metrics which monitor your Block Producer this is the name of your on-chain Block Producer Account.
 
 **Vote Decay Type**
 The original EOS mainnet halved the values of votes after 52 weeks, WAX uses 13 weeks and Telos doesn't have vote decay any more at all. You can only use one of the preset options.
@@ -259,159 +259,173 @@ Click **Create >** and the new chain will be added to the left hand panel.
 ## 5) Configure Nodes
 Nodes are configured within each chain, they monitor specific nodeos, atomic or hyperion API's. As HeadsUp is designed to be run privately, for best operation a node should be configured to directly query the API rather than a loadbalancer or any other intermediatry.
 
-You have the following fields:
+Connect to the website and **Login** as the master user.
+
+Click **Home**
+
+Click on the relevent **Chain**
+
+Click **Add Node**
+
+Configure the following fields:
+
 **Node Name**
-A human readable name for the node. This name is just for HeadsUp's user interface's benefit.
+A human readable name for the node. This name is the name used to identify the node in the HeadsUp's user interface.
 
 **Node Type**
 Available types
-Block producer - The lead Nodeos block producer
-Nodeos follower node - The secondary Nodeos instance
-Hyperion
-Atomic Assets
-Website - monitor and alert on the chains.json and bp.json files
+Block Producer - The primary Nodeos Block Producer Node
+Nodeos Follower - The secondary Nodeos instances that measure their block sync status against the Block Producer Headblock
+Hyperion - The Hyperion API
+Atomic Assets - The Atomic Assets API
+Website - Monitor and alert on your website, chains.json and bp.json files
 
-The difference between "Block Producer" and "Nodeos Follower" in the head block number metric. For the purposes of the alert the block number of the follower node in compared to the block number of the Block Producer node.
+The difference between "Block Producer" and "Nodeos Follower" in the headblock number metric. For the purposes of the alert the headblock number of the follower node in compared to the headblock number of the Block Producer Node.
 
 **IP Address**
-
 Address of the node, can also be a DNS name
 
 **Port**
 Port to connect to the node on
 
 **Sort Order**
-On screen display order of the nodes instead Headsup
+On screen display order of the nodes in Headsup
 
 **Use SSL for connections**
 Connect via HTTPS otherwise unencrypted HTTP
 
 **Ingestor**
-It is possible to have multiple ingestors here we choose which one will connect to and test the node.
+It is possible to have multiple ingestors although at this point we only use `Ingestor 1`
+
+Click **Create >**
+
+_A connect metric will need to be configured before a new node shows as reachable_
 
 ## Configuring Metrics
 
-Metrics are things we measure and display in the web app. To set them go to the node and then click the bell icon in the top right hand corner.
+Metrics define what is displayed on the HeadsUp dashboard as well as make various alerts available. 
 
-Metrics are devided into modules of related values, eg all value derived directly from a Nodeos node are grouped together. All from a Hyperion node together etc. One odd one is Voting related.
+Connect to the website and **Login** as the master user.
+
+Click **Home**
+
+Click on the relevent **Chain**
+
+Click on the relevent **Node**
+
+Click the **Bell Icon** in the top right hand corner
+
+Metrics are devided into **Metric Modules** of related values. All value derived directly from a Nodeos, Hyperion or Atomic Node are in their own groups inside which numerous metrics are selectable.
+
+Choose your **Metric Module** by opening the drop down box and selecting the relevent module.
+Choose your **Metrics** by opening the drop down box and ticking the relevent metric.
 
 ### Available Metrics
 
-**Node/Latency**
-
-Time in milliseconds to connect to the node
+---
 
 **Node/Connects**
+Is the node reachable
 
-Do you connect at all to the node
+**Node/Latency**
+Time in milliseconds to connect to the node
 
 **Node/Head_Block**
-
 The head block number
 
 **Node/Chain_Id**
-
 Chain Id the node reports
 
 **Node/Last_Irreversible_Block**
-
 The node reported last irreversible block
 
 **Node/Server_Version**
-
-The nodes report software version
+The node reported software version
 
 **Node/Head_Block_Producer**
-
 The node reported current head block producer
 
 **Node/Supported_Apis_Advertised**
-
-A list of the support apis
+A list of the support APIs
 
 **Node/Db_Size**
+Reported size of the chain state database
 
-Reported size of the database
+**Node/Db_Size_Free**
+Reported free space in the chain state database
+
+**Node/Db_Size_Used**
+Reported used space in the chain state database
 
 **Node/Claimer_Has_Run**
-
 Have BP rewards been claimed in the last 24 hours
 
-**Vote/Total**
-
-Total number of votes for our BP
-
-**Vote/Rank**
-
-Our block producer's position in the vote rankings
-
-**Vote/Percentage**
-
-Our votes as a percentage
-
-**Vote/ActiveProducerHasProduced**
-
-If our producer is in the top 21 has it produced when it should have. This will alert if the block producer is in the top 21 but hasn't produced
-
-**Website/ChainsJsonAndBpJson**
-
-Are the chains.json and bp.json files set up correctly.
+---
 
 **History_Api/Connects**
-
 Is the legacy History API accepting connections
 
-**Hyperion/Latency**
+---
 
-Time in milliseconds to connect to the node
+**Vote/Total**
+Total number of votes for the configured Block Producer account
+
+**Vote/Rank**
+Position in the vote rankings for the configured Block Producer account
+
+**Vote/Percentage**
+Percentage of total votes for the configured Block Producer account
+
+**Vote/ActiveProducerHasProduced**
+If the configured Block Producer Account is in the top 21 has it produced when it should have. This will alert if the block producer is in the top 21 but hasn't produced.
+
+---
+
+**Website/ChainsJsonAndBpJson**
+Are the chains.json and bp.json files set up correctly.
+
+---
 
 **Hyperion/Connects**
-
-Can we connect to the node
+Is the Hyperion API reachable
 
 **Hyperion/Version**
-
-Version of the hyperion software
+The Hyperion reported software version
 
 **Hyperion/Features**
+List of available features reported by the Hyperion Software
 
-List of available feature reported by the HyperionS oftware
+**Hyperion/Latency**
+Time in milliseconds to connect to the node
 
 **Hyperion/NodeosRpc**
-
-Is the NodeosRpc service reported in good health by Hyperion
+Is the Nodeos RPC service reported in good health by Hyperion
 
 **Hyperion/ElasticSearchStatus**
-
-Is the Elastic Search service reported in good health by Hyperion
+Is the Elasticsearch service reported in good health by Hyperion
 
 **Hyperion/ElasticSearchIndexedBlock**
-
-What is the last reported block indexed by elastic search
+Last reported block indexed by Elasticsearch
 
 **Hyperion/BlockNumber**
+Last nodeos block reported to Hyperion
 
-What is the last Nodeos block reported to Hyperion
+---
 
 **AtomicAssets/Latency**
-
 Time in milliseconds to connect to the node
 
 **AtomicAssets/Connects**
-
-Can we connect to the node
+Is the Atomic API reachable
 
 **AtomicAssets/Version**
-
-Software version as reported by the node
+The Atomic API reported software version
 
 **AtomicAssets/Status**
-
-Status as reported by the node
+Status as reported by Atomic API
 
 **AtomicAssets/BlockNumber**
-
-The last Eosio block number processed by the node
+The last reported block number processed by the node
 
 ### Setting Alerts
 
