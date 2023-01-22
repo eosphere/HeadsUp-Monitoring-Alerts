@@ -154,7 +154,7 @@ Once the database container is initialised press Ctrl+C to stop it.
 **Next start the Website container**
 
 ```
-> docker-compose up website
+> docker compose up website
 ```
 Once it has started **Access the HeadsUp Website** through a web browser (http://<SERVER_IP_ADDRESS>:80)
 
