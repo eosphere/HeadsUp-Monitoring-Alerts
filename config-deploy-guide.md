@@ -450,6 +450,7 @@ Stream logs to the console as they occur. Useful for detemining the liveness of 
 ```
 docker images | grep headsup-website | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi eosphere/headsup-website:{}
 docker images | grep headsup-ingestor | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi eosphere/headsup-ingestor:{}
+docker images | grep headsup-ingestor-aux | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi eosphere/headsup-ingestor-aux:{}
 ```
 
 This will delete all container images with headsup-website and headsup-ingestor in them, except for the running containers. So as long as docker compose is running these will clean up old container images. The container images are qute large and useless once upgraded so you probably want to do this as part of your usual maintenace after performing an upgrade.
