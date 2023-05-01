@@ -138,6 +138,15 @@ postgres:
 
 **headsup_server_slackhook** The slack hook URL for your postgres (https://slack.com/intl/en-au/help/articles/115005265063-Incoming-webhooks-for-Slack)
 
+### 2.1) Upgrading to use ingestor_aux
+
+Version v0.0.129 added a new program to the docker-compose configure, ingestor_aux. This is an additional program which takes some of the load off the ingestor. You can upgrade your docker-compose.yaml file from an earlier version by doing the following.
+
+1) Upgrade the image version to v0.0.129 for all the container.
+2) Copy the ingestor-aux section from the example docker-compose.
+3) Change the ingestor section so that the ingestor depends on ingestor_aux.
+4) Restart with `docker-compose up -d`
+
 ## 3) Initial Startup
 
 HeadsUp requires a once-off manual sequenced start of it's containers during initial startup
