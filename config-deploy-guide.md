@@ -11,7 +11,9 @@ The Website is the central hub of the HeadsUp platform. The website receives met
 The website is a SPA (single page application) when the user browses to it, it opens a websocket to the website. The website then sends metrics and alerts down that websocket.
 
 ## Ingestor
-The Ingestor is the engine of the HeadsUp platform. The Ingestor is resposible for querying all monitored nodes and providing structured metric data to the Website.
+The Ingestor is the engine of the HeadsUp platform. The Ingestor is resposible for querying all monitored nodes and providing structured metric data to the Website. 
+
+Since version v0.0.129 the ingestor function is split across two conatiners ```ingestor``` and ```ingestor-aux```. The latter is a new container running a high performance Rust iteration of the HeadsUp Ingestor. Currently only a few processes are handled by ```ingestor-aux``` in time all processes will be migrated over.
 
 ## Database
 
@@ -138,13 +140,13 @@ postgres:
 
 **headsup_server_slackhook** The slack hook URL for your postgres (https://slack.com/intl/en-au/help/articles/115005265063-Incoming-webhooks-for-Slack)
 
-### 2.1) Upgrading to use ingestor_aux
+### 2.1) Upgrading to use ingestor-aux
 
-Version v0.0.129 added a new program to the docker-compose configure, ingestor_aux. This is an additional program which takes some of the load off the ingestor. You can upgrade your docker-compose.yaml file from an earlier version by doing the following.
+Version v0.0.129 added a new container called ```ingester-aux``` to the docker-compose .yaml file. This is an additional high performance container which takes load off the original ingestor. If you are upgrading a previous HeadsUp version, update your docker-compose.yaml file by doing the following.
 
-1) Upgrade the image version to v0.0.129 for all the container.
-2) Copy the ingestor-aux section from the example docker-compose.
-3) Change the ingestor section so that the ingestor depends on ingestor_aux.
+1) Change the image version to v0.0.129 for all the containers.
+2) Copy the ingestor_aux section from the example docker-compose.
+3) Change the ingestor section so that the ingestor depends (starts before) on ingestor_aux.
 4) Restart with `docker-compose up -d`
 
 ## 3) Initial Startup
