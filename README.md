@@ -10,7 +10,7 @@ HeadsUp is designed for Antelope Node Operators to run a private instance of the
 
 Alerts can be configured to notify via the GUI Website Frontend, Email and Slack.
 
-HeadsUp is simple to configure and deploy with docker compose which utilises three docker containers editable in a single compose .yaml file. These containers consist of the HeadsUp Website, HeadsUp Ingestor and Postgres Database containers.
+HeadsUp is simple to configure and deploy with docker compose which utilises four docker containers editable in a single compose .yaml file. These containers consist of the HeadsUp Website, HeadsUp Ingestor and Postgres Database containers.
 
 Get started with HeadsUp by following the [**Configuration and Deployment Guide**](https://github.com/eosphere/HeadsUp-Monitoring-Alerts/blob/main/config-deploy-guide.md)
 
