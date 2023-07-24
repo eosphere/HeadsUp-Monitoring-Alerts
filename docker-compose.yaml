@@ -5,7 +5,7 @@ volumes:
 services:
   ingestor_aux:
     restart: unless-stopped
-    image: "eosphere/headsup-ingestor-aux:v0.0.154"
+    image: "eosphere/headsup-ingestor-aux:v0.0.155"
     environment:
       #- headsup_sentryurl=
     depends_on:
@@ -17,7 +17,7 @@ services:
         #max-size: "500m"
   ingestor:
     restart: unless-stopped
-    image: "eosphere/headsup-ingestor:v0.0.154"
+    image: "eosphere/headsup-ingestor:v0.0.155"
     mem_limit: 1024m
     environment:
       - headsup_serverurl=ws://website/ws
@@ -38,7 +38,7 @@ services:
       - ingestor_aux
   website:
     restart: unless-stopped
-    image: "eosphere/headsup-website:v0.0.154"
+    image: "eosphere/headsup-website:v0.0.155"
     mem_limit: 300m
     ports:
       - "8000:80"
