@@ -3,34 +3,21 @@ volumes:
   postgresdata1:
 
 services:
-  ingestor_aux:
-    restart: unless-stopped
-    image: "eosphere/headsup-ingestor-aux:v0.0.162"
-    environment:
-      #- headsup_sentryurl=
-      - headsup_nodeospollschedule=2
-      - headsup_votingpollschedule=30
-      - headsup_bpjsonpollschedule=30
-    depends_on:
-      - website
-    logging:
-      driver: "journald"
-      options:
-        tag: "{{.Name}}"
-        #max-size: "500m"
   ingestor:
     restart: unless-stopped
-    image: "eosphere/headsup-ingestor:v0.0.162"
+    image: "eosphere/headsup-ingestor:v0.0.198"
     mem_limit: 1024m
     environment:
       - headsup_serverurl=ws://website/ws
       - headsup_name=Ingestor 1
       - headsup_accesskey=<ENTER ACCESS KEY HERE>
       - headsup_logginglevel=INFO
-      - headsup_nodeospollschedule=2
-      - headsup_votingpollschedule=30
-      - headsup_bpjsonpollschedule=30
-      - headsup_sendqueueschedule=0.2
+      - headsup_nodeospollschedule=2.0
+      - headsup_votingpollschedule=30.0
+      - headsup_bpjsonpollschedule=30.0
+      - headsup_hyperionpollschedule=10.0
+      - headsup_atomicassetspollschedule=10.0
+      - headsup_logginglevel=INFO
       #- headsup_sentryurl=""
     logging:
       driver: "journald"
@@ -41,7 +28,7 @@ services:
       - ingestor_aux
   website:
     restart: unless-stopped
-    image: "eosphere/headsup-website:v0.0.162"
+    image: "eosphere/headsup-website:v0.0.198"
     mem_limit: 300m
     ports:
       - "8000:80"
