@@ -24,8 +24,6 @@ services:
       options:
         tag: "{{.Name}}"
         #max-size: "500m"
-    depends_on:
-      - ingestor_aux
   website:
     restart: unless-stopped
     image: "eosphere/headsup-website:v0.0.198"
