@@ -17,13 +17,14 @@ services:
       - headsup_bpjsonpollschedule=30.0
       - headsup_hyperionpollschedule=10.0
       - headsup_atomicassetspollschedule=10.0
-      - headsup_logginglevel=INFO
-      #- headsup_sentryurl=""
+      # - headsup_sentryurl=""
     logging:
       driver: "journald"
       options:
         tag: "{{.Name}}"
-        #max-size: "500m"
+        # max-size: "500m"
+    depends_on:
+      - website
   website:
     restart: unless-stopped
     image: "eosphere/headsup-website:v0.0.198"
@@ -42,6 +43,9 @@ services:
       - headsup_server_ingestortimeout=60
       - headsup_logginglevel=INFO
       - headsup_server_rooturl=<https://YOUR ROOT URL>
+      # - headsup_server_logduration=3
+      # - headsup_server_failedpingsthreshold=3
+      # - headsup_server_reminderfrequency=15
       # - headsup_server_emailalerts=true
       # - headsup_server_emailsender=<EMAIL SENDER ADDRESS>
       # - headsup_server_emailto=<ALERTS EMAIL 1>,<ALERTS EMAIL 2>
