@@ -6,6 +6,7 @@ services:
   ingestor:
     restart: unless-stopped
     image: "eosphere/headsup-ingestor:v0.0.198"
+    stop_grace_period: 10s
     mem_limit: 1024m
     environment:
       - headsup_serverurl=ws://website/ws
