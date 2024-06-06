@@ -13,8 +13,6 @@ The website is a SPA (single page application) when the user browses to it, it o
 ## Ingestor
 The Ingestor is the engine of the HeadsUp platform. The Ingestor is resposible for querying all monitored nodes and providing structured metric data to the Website. 
 
-Since version v0.0.129 the ingestor function is split across two conatiners ```ingestor``` and ```ingestor-aux```. The latter is a new container running a high performance Rust iteration of the HeadsUp Ingestor. Currently only a few processes are handled by ```ingestor-aux``` in time all processes will be migrated over.
-
 ## Database
 
 A postgres database which holds the current configuration information and a list of recent alerts. By default we run this in a docker container and use a docker volume to ensure the database is persisted.
@@ -24,14 +22,13 @@ A postgres database which holds the current configuration information and a list
 - 64GB Disk
 - 2GB RAM
 - Ubuntu 22.04 **_(Recommended)_**
-- docker
-- docker compose
+- docker compose v2.27.0 **_(Recommended)_**
 
 # Setting Up
 
 This guide follows installing HeadsUp on a server running Ubuntu 22.04 however other docker compatible distributions will work with minor adjustments. The steps to a running production HeadsUp instance are the following:
 
-1) Install docker and docker compose
+1) Install docker compose and associated applications
 2) Configure the docker-compose.yaml
 3) Initial startup
 4) Configure Chains
@@ -39,50 +36,55 @@ This guide follows installing HeadsUp on a server running Ubuntu 22.04 however o
 6) Configure Metrics
 7) Set Alerts
 
-## 1) Install docker and docker compose
 
-**docker**
+## 1) Install docker compose and associated applications
+
+**Add Docker's official GPG key:**
 ```
-> sudo apt update
+sudo apt-get update
 
-> sudo apt install apt-transport-https ca-certificates curl software-properties-common
+sudo apt-get install ca-certificates curl
 
-> curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+sudo install -m 0755 -d /etc/apt/keyrings
 
-> echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 
-> sudo apt update
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+```
+**Add the repository to Apt sources:**
 
-*Check what version will be installed*
-> apt-cache policy docker-ce
+```
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-> sudo apt install docker-ce
+sudo apt-get update
+```
+**Install:**
+```
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+**Check docker compose version:**
+```
+docker compose --version
 
-*Check docker version*
-> docker --version
+Docker Compose version v2.27.0
 ```
 **NB:** Docker requires that the user that will be running docker is in the docker user group, assuming you don't want to run HeadsUp as root add your user to the docker group as below:
+**Add user to the docker group:**
 ```
-> sudo usermod -aG docker ${USER}
+sudo usermod -aG docker ${USER}
 ```
 
-**docker compose**
-```
-> mkdir -p ~/.docker/cli-plugins/
-
-> curl -SL https://github.com/docker/compose/releases/download/v2.3.3/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
-
-> chmod +x ~/.docker/cli-plugins/docker-compose
-
-*Check docker compose version*
-> docker compose version
-```
 ## 2) Configure the docker-compose.yaml
 Download the latest HeadsUp example `docker-compose.yaml` and configure neccessary fields with your own details as below:
 ```
-> wget https://github.com/eosphere/HeadsUp-Monitoring-Alerts/blob/main/docker-compose.yaml
+wget https://github.com/eosphere/HeadsUp-Monitoring-Alerts/blob/main/example-docker-compose.yaml
 
-> nano docker-compose.yaml
+cp example-docker-compose.yaml docker-compose.yaml
+
+nano docker-compose.yaml
 
 website:
   environment:
@@ -90,6 +92,9 @@ website:
     - headsup_server_jwtsecret=<ENTER NEW RANDOM SEED>
     - headsup_server_postgrespassword=<POSTGRES PASSWORD>
     - headsup_server_rooturl=<https://YOUR ROOT URL>
+    - headsup_server_logduration=7
+    - headsup_server_failedpingsthreshold=3
+    - headsup_server_reminderfrequency=15
 
 #Alerts Email and Slack Webhook - EOSphere Example#
     - headsup_server_emailalerts=true
@@ -116,6 +121,12 @@ postgres:
 
 **headsup_server_debugingestorpassword** should not be set for production systems.
 
+**headsup_server_logduration** the number of days to keep resolved alerts in history. 
+
+**headsup_server_failedpingsthreshold** the number of consecutive failed conditions to be met before alerting.
+
+**headsup_server_reminderfrequency** the frequency in minutes to remind of an ongoing alert.
+
 **headsup_server_emailalerts** Set to true if you want to send email alerts.
 
 **headsup_server_emailsender** The from address for email alerts
@@ -140,14 +151,6 @@ postgres:
 
 **headsup_server_slackhook** The slack hook URL for your postgres (https://slack.com/intl/en-au/help/articles/115005265063-Incoming-webhooks-for-Slack)
 
-### 2.1) Upgrading to use ingestor-aux
-
-Version v0.0.129 added a new container called ```ingester-aux``` to the docker-compose .yaml file. This is an additional high performance container which takes load off the original ingestor. If you are upgrading a previous HeadsUp version, update your docker-compose.yaml file by doing the following.
-
-1) Change the image version to v0.0.129 for all the containers.
-2) Copy the ingestor_aux section from the example docker-compose.
-3) Change the ingestor section so that the ingestor depends (starts before) on ingestor_aux.
-4) Restart with `docker-compose up -d`
 
 ## 3) Initial Startup
 
@@ -156,16 +159,16 @@ HeadsUp requires a once-off manual sequenced start of it's containers during ini
 **First the postgres Database container**
 
 ```
-> docker compose up postgres
+docker compose up postgres
 ```
 This will download the postgres container and then run it which initialises the database. We do this because of the time it takes to initialise this container. When the website container starts it tries to run the database migrations immediately, if the database is not ready this causes an issue.
 
 Once the database container is initialised press Ctrl+C to stop it.
 
-**Next start the Website container**
+**Next start the Website container to create and add an Access Key**
 
 ```
-> docker compose up website
+docker compose up website
 ```
 Once it has started **Access the HeadsUp Website** through a web browser (http://<SERVER_IP_ADDRESS>:80)
 
@@ -177,37 +180,47 @@ Click the **Plus/+** sign next to ingestors
 
 Give your **Ingestor a Name** (Typically Ingestor 1) and set the **Sort Order** to 0
 
-Click the **Save** and once it has saved click the **Ingestor Access Key** arrow and lock button
+Click the **Save** button 
 
-**Copy the Code** it displays and Click the **Set** button to update the server
+Once it has saved click the **Ingestor Key and Plus/+ icon** to "generate new key"
+
+Click **Generate Key**
+
+Click **Copy** to copy the Access Key and then click **Done**
 
 _The access key is similar to a password for the Ingestor and the name is similar to a username_
 
-Edit the `docker-config.yaml` file to place the new access_key in the headsup_accesskey in the ingestor section
+Press Ctrl+C to stop the Website container.
+
+Edit your `docker-config.yaml` file to place the new access_key in the headsup_accesskey in the ingestor section
 ```
-> nano docker-compose.yaml
+nano docker-compose.yaml
+
 services:
   ingestor:
   environment:
+    - headsup_name=Ingestor 1    
     - headsup_accesskey=<ENTER ACCESS KEY HERE>
 ```
-Press Ctrl+C to stop the Website container.
 
-The manual initialisation process is complete, press Ctrl+C to stop the Website container.
+The manual initialisation process is complete.
 
 **Next start HeadsUp with docker compose**
 ```
-> docker compose up -d
+docker compose up -d
 ```
 This will orchestrate the launch of the HeadsUp platform and will run docker compose in the background. 
 
 You can check running docker processes with: 
 ```
-> docker ps
+docker ps
+
 or
-> docker stats --all
+
+docker stats --all
 ```
 In this configuration docker compose will automatically restart the HeadsUp platform on reboot.
+
 
 ## 4) Configure Chains
 HeadsUp has the ability to monitor and alert on multiple Antelope blockchains at the same time, each new chain is essentially a discrete blockchain network Mainnet/Testnet etc.
@@ -245,6 +258,7 @@ The order in which to display this chain in the on-screen list.
 
 Click **Create >** and the new chain will be added to the left hand panel.
 
+
 ## 5) Configure Nodes
 Nodes are configured within each chain, they monitor specific nodeos, atomic or hyperion API's. As HeadsUp is designed to be run privately, for best operation a node should be configured to directly query the API rather than a loadbalancer or any other intermediatry.
 
@@ -256,17 +270,23 @@ Click on the relevent **Chain**
 
 Click **Add Node**
 
-Configure the following fields:
+
+### Configure the following fields:
 
 **Node Name**
+
 A human readable name for the node. This name is the name used to identify the node in the HeadsUp's user interface.
 
 **Node Type**
-Available types
+
 Block Producer - The primary Nodeos Block Producer Node
+
 Nodeos Follower - The secondary Nodeos instances that measure their block sync status against the Block Producer Headblock
+
 Hyperion - The Hyperion API
+
 Atomic Assets - The Atomic Assets API
+
 Website - Monitor and alert on your website, chains.json and bp.json files
 
 The difference between "Block Producer" and "Nodeos Follower" in the headblock number metric. For the purposes of the alert the headblock number of the follower node in compared to the headblock number of the Block Producer Node.
@@ -288,7 +308,8 @@ It is possible to have multiple ingestors although at this point we only use `In
 
 Click **Create >**
 
-_A connect metric will need to be configured before a new node shows as reachable_
+_A Default set of Metrics and Alerts will be configured upon creation of each node_
+
 
 ## 6) Configure Metrics
 
@@ -304,123 +325,18 @@ Click on the relevent **Node**
 
 Click the **Bell Icon** in the top right hand corner
 
-Metrics are devided into **Metric Modules** of related values. All value derived directly from a Nodeos, Hyperion or Atomic Node are in their own groups inside which numerous metrics are selectable.
+On the left side Metrics are divided into **Metric Modules** of related values. Metrics are different depending on whether a Nodeos, Hyperion or Atomic Node is configured.
 
-Choose your **Metric Module** by opening the drop down box and selecting the relevent module.
-Choose your **Metrics** by opening the drop down box and ticking the relevent metric.
+Various metrics are selectable within each **Metric Module** and are enabled by selecting **Monitor / Monitoring**
 
-### Available Metrics
+Once a specific metric is selected and **Saved**, it will be viewable in the dashboard and may open up options in the alert menu.
 
----
-
-**Node/Connects**
-Is the node reachable
-
-**Node/Latency**
-Time in milliseconds to connect to the node
-
-**Node/Head_Block**
-The head block number
-
-**Node/Chain_Id**
-Chain Id the node reports
-
-**Node/Last_Irreversible_Block**
-The node reported last irreversible block
-
-**Node/Server_Version**
-The node reported software version
-
-**Node/Head_Block_Producer**
-The node reported current head block producer
-
-**Node/Supported_Apis_Advertised**
-A list of the support APIs
-
-**Node/Db_Size**
-Reported size of the chain state database
-
-**Node/Db_Size_Free**
-Reported free space in the chain state database
-
-**Node/Db_Size_Used**
-Reported used space in the chain state database
-
-**Node/Claimer_Has_Run**
-Have BP rewards been claimed in the last 24 hours
-
----
-
-**History_Api/Connects**
-Is the legacy History API accepting connections
-
----
-
-**Vote/Total**
-Total number of votes for the configured Block Producer account
-
-**Vote/Rank**
-Position in the vote rankings for the configured Block Producer account
-
-**Vote/Percentage**
-Percentage of total votes for the configured Block Producer account
-
-**Vote/ActiveProducerHasProduced**
-If the configured Block Producer Account is in the top 21 has it produced when it should have. This will alert if the block producer is in the top 21 but hasn't produced.
-
----
-
-**Website/ChainsJsonAndBpJson**
-Are the chains.json and bp.json files set up correctly.
-
----
-
-**Hyperion/Connects**
-Is the Hyperion API reachable
-
-**Hyperion/Version**
-The Hyperion reported software version
-
-**Hyperion/Features**
-List of available features reported by the Hyperion Software
-
-**Hyperion/Latency**
-Time in milliseconds to connect to the node
-
-**Hyperion/NodeosRpc**
-Is the Nodeos RPC service reported in good health by Hyperion
-
-**Hyperion/ElasticSearchStatus**
-Is the Elasticsearch service reported in good health by Hyperion
-
-**Hyperion/ElasticSearchIndexedBlock**
-Last reported block indexed by Elasticsearch
-
-**Hyperion/BlockNumber**
-Last nodeos block reported to Hyperion
-
----
-
-**AtomicAssets/Latency**
-Time in milliseconds to connect to the node
-
-**AtomicAssets/Connects**
-Is the Atomic API reachable
-
-**AtomicAssets/Version**
-The Atomic API reported software version
-
-**AtomicAssets/Status**
-Status as reported by Atomic API
-
-**AtomicAssets/BlockNumber**
-The last reported block number processed by the node
 
 ## 7) Set Alerts
 
 Metrics only advise on a value while alerts will send a message when a certain condition is met. Depending on your configuration these alerts notify via the website dashboard, email and/or slack.
 
-Alerts are set on each node and are available when a corresponding metric has been selected in the same Metrics and Alert dialog box.
+Alerts are set on each node and are available when a corresponding metric has been selected.
 
 Connect to the website and **Login** as the master user.
 
@@ -432,15 +348,15 @@ Click on the relevent **Node**
 
 Click the **Bell Icon** in the top right hand corner
 
-Click **Alerts**
+Alerts are displayed on the right hand side and are grouped into **Alert Modules** of related values and typically would already have some default alerts applied. 
 
-Each alert has a condition field which is what it will test against, there is an explanation of the condition field on the right hand side.
+Each alert has a condition field which is what it will test against, there is an explanation of the condition field next to each alert.
 
 ### New User Alerts Recommendation
 Start with experiment setting thresholds for alerts relevent to the Node Type, some Metrics will automatically be alerted on when selected such as Node/Connects or Node/Claimer_Has_Run
 
 These alerts are quite handy to start with:
-- Node/Db_Size_Free : 4096
+- Node/Db_Size_Free : 1024
 - Node/HeadBlock : 100
 - Node/Latency : 2000
 
@@ -461,7 +377,6 @@ Stream logs to the console as they occur. Useful for detemining the liveness of 
 ```
 docker images | grep headsup-website | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi eosphere/headsup-website:{}
 docker images | grep headsup-ingestor | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi eosphere/headsup-ingestor:{}
-docker images | grep headsup-ingestor-aux | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi eosphere/headsup-ingestor-aux:{}
 ```
 
 This will delete all container images with headsup-website and headsup-ingestor in them, except for the running containers. So as long as docker compose is running these will clean up old container images. The container images are qute large and useless once upgraded so you probably want to do this as part of your usual maintenace after performing an upgrade.
