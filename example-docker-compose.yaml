@@ -1,4 +1,3 @@
-version: "3.3"
 volumes:
   postgresdata1:
 
@@ -44,9 +43,9 @@ services:
       - headsup_server_ingestortimeout=60
       - headsup_logginglevel=INFO
       - headsup_server_rooturl=<https://YOUR ROOT URL>
-      # - headsup_server_logduration=3
-      # - headsup_server_failedpingsthreshold=3
-      # - headsup_server_reminderfrequency=15
+      - headsup_server_logduration=3
+      - headsup_server_failedpingsthreshold=3
+      - headsup_server_reminderfrequency=15
       # - headsup_server_emailalerts=true
       # - headsup_server_emailsender=<EMAIL SENDER ADDRESS>
       # - headsup_server_emailto=<ALERTS EMAIL 1>,<ALERTS EMAIL 2>
