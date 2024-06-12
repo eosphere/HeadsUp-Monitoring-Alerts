@@ -4,7 +4,7 @@ volumes:
 services:
   ingestor:
     restart: unless-stopped
-    image: "eosphere/headsup-ingestor:v0.1.0"
+    image: "eosphere/headsup-ingestor:v0.1.1"
     stop_grace_period: 10s
     mem_limit: 1024m
     environment:
@@ -27,7 +27,7 @@ services:
       - website
   website:
     restart: unless-stopped
-    image: "eosphere/headsup-website:v0.1.0"
+    image: "eosphere/headsup-website:v0.1.1"
     mem_limit: 300m
     ports:
       - "8000:80"
