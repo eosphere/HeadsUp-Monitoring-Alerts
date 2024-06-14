@@ -1,4 +1,4 @@
-# HeadsUp - v0.1.0
+# HeadsUp - v0.1.2
 ## Antelope Monitoring and Alerts
 
 The HeadsUp Monitoring and Alerts Platform has been created by EOSphere for the Antelope Web3 community to encourage healthy infrastructure and blockchain service delivery.
