@@ -67,7 +67,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 ```
 **Check docker compose version:**
 ```
-docker compose --version
+docker compose version
 
 Docker Compose version v2.27.0
 ```
@@ -80,7 +80,39 @@ sudo usermod -aG docker ${USER}
 ## 2) Configure the docker-compose.yaml
 Download the latest HeadsUp example `docker-compose.yaml` and configure neccessary fields with your own details as below:
 ```
-wget https://github.com/eosphere/HeadsUp-Monitoring-Alerts/blob/main/example-docker-compose.yaml
+wget https://raw.githubusercontent.com/eosphere/HeadsUp-Monitoring-Alerts/main/example-docker-compose.yaml
+
+cp example-docker-compose.yaml docker-compose.yaml
+
+nano docker-compose.yaml
+
+website:
+  environment:
+    - headsup_server_masterpassword=<ENTER NEW PASSWORD>
+    - headsup_server_jwtsecret=<ENTER NEW RANDOM SEED>
+    - headsup_server_postgrespassword=<POSTGRES PASSWORD>
+    - headsup_server_rooturl=<https://YOUR ROOT URL>
+    - headsup_server_logduration=7
+    - headsup_server_failedpingsthreshold=3
+    - headsup_server_reminderfrequency=15
+
+#Alerts Email and Slack Webhook - EOSphere Example#
+    - headsup_server_emailalerts=true
+    - headsup_server_emailsender=alerts@eosphere.io
+    - headsup_server_emailto=ross@eosphere.io,shelley@eosphere.io,john@eosphere.io
+    - headsup_server_emailsmtpserver=smtp.gmail.com
+    - headsup_server_emailsmtpssl=true
+    - headsup_server_emailsmtptls=false
+    - headsup_server_emailsmtpport=465
+    - headsup_server_emailsmtpuser=alerts@eosphere.io
+    - headsup_server_emailsmtppassword=E6oNZPfZ6r5g
+    - headsup_server_slackalerts=true
+    - headsup_server_slackhook=https://hooks.slack.com/services/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o
+
+postgres:
+  environment:
+    - POSTGRES_PASSWORD=<POSTGRES PASSWORD>
+
 
 cp example-docker-compose.yaml docker-compose.yaml
 
