@@ -1,4 +1,4 @@
-# HeadsUp - v0.1.2
+# HeadsUp - v0.1.3
 ## Antelope Monitoring and Alerts
 
 The HeadsUp Monitoring and Alerts Platform has been created by EOSphere for the Antelope Web3 community to encourage healthy infrastructure and blockchain service delivery.
@@ -8,7 +8,7 @@ HeadsUp is designed for Antelope Node Operators to run a private instance of the
 - Hyperion History
 - Atomic Assets API
 
-Alerts can be configured to notify via the GUI Website Frontend, Email and Slack.
+Alerts can be configured to notify via the GUI Website Frontend, Email, Telegram and Slack.
 
 HeadsUp is simple to configure and deploy with docker compose which utilises three docker containers editable in a single compose .yaml file. These containers consist of the HeadsUp Website, HeadsUp Ingestor and Postgres Database containers.
 
