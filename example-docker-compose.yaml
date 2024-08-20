@@ -4,7 +4,7 @@ volumes:
 services:
   ingestor:
     restart: unless-stopped
-    image: "eosphere/headsup-ingestor:v0.1.2"
+    image: "eosphere/headsup-ingestor:v0.1.3"
     stop_grace_period: 10s
     mem_limit: 1024m
     environment:
@@ -27,7 +27,7 @@ services:
       - website
   website:
     restart: unless-stopped
-    image: "eosphere/headsup-website:v0.1.2"
+    image: "eosphere/headsup-website:v0.1.3"
     mem_limit: 300m
     ports:
       - "8000:80"
@@ -55,6 +55,9 @@ services:
       # - headsup_server_emailsmtpport=25
       # - headsup_server_emailsmtpuser=<SMTP SERVER USERNAME>
       # - headsup_server_emailsmtppassword=<SMTP SERVER PASSWORD>
+      # - headsup_server_telegramalerts=true                                                                                                                                                                                            
+      # - headsup_server_telegrambot=xxxxxxxxxx:yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy                                                                                                                                                     
+      # - headsup_server_telegramchat=-zzzzzzzzzz
       # - headsup_server_slackalerts=true
       # - headsup_server_slackhook=https://hooks.slack.com/services/xxxx/yyyy/zzzz
     logging:
