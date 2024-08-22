@@ -326,9 +326,9 @@ Connect to the website and **Login** as the master user.
 
 Click **Home**
 
-Click on the relevent **Chain**
+Click on the relevant **Chain**
 
-Click on the relevent **Node**
+Click on the relevant **Node**
 
 Click the **Bell Icon** in the top right hand corner
 
@@ -341,7 +341,7 @@ Once a specific metric is selected and **Saved**, it will be viewable in the das
 
 ## 7) Set Alerts
 
-Metrics only advise on a value while alerts will send a message when a certain condition is met. Depending on your configuration these alerts notify via the website dashboard, email and/or slack.
+Metrics only advise on a value while alerts will send a message when a certain condition is met. Depending on your configuration these alerts notify via the website dashboard, email, telegram and/or slack.
 
 Alerts are set on each node and are available when a corresponding metric has been selected.
 
@@ -349,9 +349,9 @@ Connect to the website and **Login** as the master user.
 
 Click **Home**
 
-Click on the relevent **Chain**
+Click on the relevant **Chain**
 
-Click on the relevent **Node**
+Click on the relevant **Node**
 
 Click the **Bell Icon** in the top right hand corner
 
