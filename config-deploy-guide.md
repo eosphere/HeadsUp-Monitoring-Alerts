@@ -282,7 +282,7 @@ Click **Add Node**
 
 **Node Name**
 
-A human readable name for the node. This name is the name used to identify the node in the HeadsUp's user interface.
+A human readable name for the node. This name is the name used to identify the node in the HeadsUp user interface.
 
 **Node Type**
 
@@ -296,7 +296,7 @@ Atomic Assets - The Atomic Assets API
 
 Website - Monitor and alert on your website, chains.json and bp.json files
 
-The difference between "Block Producer" and "Nodeos Follower" in the headblock number metric. For the purposes of the alert the headblock number of the follower node in compared to the headblock number of the Block Producer Node.
+The difference between "Block Producer" and "Nodeos Follower" is the headblock number metric. For the purposes of the alert the headblock number of the follower node in compared to the headblock number of the Block Producer Node.
 
 **IP Address**
 Address of the node, can also be a DNS name
