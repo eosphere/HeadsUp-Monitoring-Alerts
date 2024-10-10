@@ -12,7 +12,11 @@ Alerts can be configured to notify via the GUI Website Frontend, Email, Telegram
 
 HeadsUp is simple to configure and deploy with docker compose which utilises three docker containers editable in a single compose .yaml file. These containers consist of the HeadsUp Website, HeadsUp Ingestor and Postgres Database containers.
 
-Get started with HeadsUp by following the [**Configuration and Deployment Guide**](https://github.com/eosphere/HeadsUp-Monitoring-Alerts/blob/main/config-deploy-guide.md)
+Get started with HeadsUp by following the Guides below:
+
+[**Configuration and Deployment Guide**](https://github.com/eosphere/HeadsUp-Monitoring-Alerts/blob/main/config-deploy-guide.md)
+
+[**Configure Telegram Alerts**](https://github.com/eosphere/HeadsUp-Monitoring-Alerts/blob/main/config-telegram-alerts-guide.md)
 
 Headsup is free for non-commercial use and we hope that it makes your Antelope DevOps life simpler through excellent visability and monitoring.
 
