@@ -18,6 +18,8 @@ Get started with HeadsUp by following the Guides below:
 
 [**Configure Telegram Alerts**](https://github.com/eosphere/HeadsUp-Monitoring-Alerts/blob/main/config-telegram-alerts-guide.md)
 
+[**Configure Slack Alerts**](https://github.com/eosphere/HeadsUp-Monitoring-Alerts/blob/main/config-slack-alerts-guide.md)
+
 Headsup is free for non-commercial use and we hope that it makes your Antelope DevOps life simpler through excellent visability and monitoring.
 
 We would appreciate any feedback or feature requests here in [GitHub](https://github.com/eosphere/HeadsUp-Monitoring-Alerts/issues) or please join our [**Telegram Group**](https://t.me/headsup_monitoring_alerts) to discuss.
