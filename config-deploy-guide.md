@@ -197,6 +197,10 @@ Click **Copy** to copy the Access Key and then click **Done**
 
 _The access key is similar to a password for the Ingestor and the name is similar to a username_
 
+Optionally give your dashboard an **instance_title** to be displayed in the banner and tab.
+
+Optionally add your **organisation_domain** to be used for ```chains.json``` and ```bp.json``` monitoring.
+
 Press Ctrl+C to stop the Website container.
 
 Edit your `docker-config.yaml` file to place the new access_key in the headsup_accesskey in the ingestor section
@@ -253,6 +257,9 @@ This is the icon to use for this chain, you cannot customise this setting.
 
 **BP Name**
 For metrics which monitor your Block Producer this is the name of your on-chain Block Producer Account.
+
+**Monitor BP.json for the chain**
+Select if you would like to monitor the ```chains.json``` -> ```bp.json``` for this chain advertised under the **organisation_domain**.
 
 **Vote Decay Type**
 The original EOS mainnet halved the values of votes after 52 weeks, WAX uses 13 weeks and Telos doesn't have vote decay any more at all. You can only use one of the preset options.
@@ -366,6 +373,11 @@ These alerts are quite handy to start with:
 - Node/Db_Size_Free : 1024
 - Node/HeadBlock : 100
 - Node/Latency : 2000
+
+### chains.json and bp.json alerts
+Click **JSON Status**
+
+Select the **Alerting** switch on the top right to alert on chains.json and bp.json status 
 
 ## Useful commands while running Headsup
 
